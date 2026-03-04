@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LiterAlura - Experiencia Inmersiva</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/estilos.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- FONDO ANIMADO GLOBAL - ESTRELLAS TITILANTES -->
+    <div class="stars-bg" id="animatedBg">
+        <div class="stars" id="stars"></div>
+        <div class="shooting-star" style="top: 10%; animation-delay: 2s;"></div>
+        <div class="shooting-star" style="top: 30%; animation-delay: 5s;"></div>
+        <div class="shooting-star" style="top: 50%; animation-delay: 8s;"></div>
+        <div class="shooting-star" style="top: 70%; animation-delay: 11s;"></div>
+        <div class="shooting-star" style="top: 90%; animation-delay: 14s;"></div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="content-wrapper">
+        <!-- Navbar interactivo -->
+        <nav class="navbar" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <i class="fas fa-infinity me-2"></i>LiterAlura
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/">
+                                <i class="fas fa-home me-1"></i>Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/libros">
+                                <i class="fas fa-book me-1"></i>Explorar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/autores">
+                                <i class="fas fa-users me-1"></i>Autores
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/top10">
+                                <i class="fas fa-chart-line me-1"></i>Tendencias
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero section -->
+        <section class="hero">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="hero-content">
+                            <h1 class="hero-title">
+                                Descubre el<br>
+                                <span>universo literario</span><br>
+                                digital
+                            </h1>
+                            <p class="hero-subtitle">
+                                Miles de libros clásicos y contemporáneos te esperan en un espacio 
+                                diseñado para sumergirte en la lectura.
+                            </p>
+                            
+                            <!-- Buscador interactivo -->
+                            <form action="/buscar" method="get" class="search-wrapper">
+                                <input type="text" class="search-input" name="titulo" 
+                                       placeholder="¿Qué libro buscas hoy?">
+                                <button type="submit" class="search-btn">
+                                    <i class="fas fa-search me-2"></i>Buscar
+                                </button>
+                            </form>
+                            
+                            <!-- Tags populares -->
+                            <div class="d-flex flex-wrap gap-2 mt-4">
+                                <span class="filter-btn" onclick="buscarTag('clásicos')">
+                                    <i class="fas fa-crown"></i> Clásicos
+                                </span>
+                                <span class="filter-btn" onclick="buscarTag('novela')">
+                                    <i class="fas fa-heart"></i> Novela
+                                </span>
+                                <span class="filter-btn" onclick="buscarTag('poesía')">
+                                    <i class="fas fa-feather"></i> Poesía
+                                </span>
+                                <span class="filter-btn" onclick="buscarTag('filosofía')">
+                                    <i class="fas fa-brain"></i> Filosofía
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <!-- Elementos flotantes decorativos -->
+                        <div class="position-relative" style="height: 400px;">
+                            <i class="fas fa-book floating-book" style="position: absolute; top: 20%; left: 20%; font-size: 4rem; color: rgba(99, 102, 241, 0.2); animation: float 3s ease-in-out infinite;"></i>
+                            <i class="fas fa-book-open floating-book" style="position: absolute; top: 40%; right: 30%; font-size: 5rem; color: rgba(16, 185, 129, 0.2); animation: float 4s ease-in-out infinite 1s;"></i>
+                            <i class="fas fa-feather floating-book" style="position: absolute; bottom: 20%; left: 40%; font-size: 3.5rem; color: rgba(245, 158, 11, 0.2); animation: float 3.5s ease-in-out infinite 0.5s;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Estadísticas interactivas -->
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-number" th:text="${totalLibros}">0</div>
+                    <div class="stat-label">Obras disponibles</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="stat-number" th:text="${totalAutores}">0</div>
+                    <div class="stat-label">Autores</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="stat-number" th:text="${#lists.size(libros)}">0</div>
+                    <div class="stat-label">Idiomas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de libros destacados -->
+        <div class="container mt-5">
+            <div class="section-header">
+                <h2 class="section-title">Descubre obras excepcionales</h2>
+                <p class="section-subtitle">Una selección de los libros más valorados por nuestra comunidad</p>
+            </div>
+
+            <!-- Filtros por idioma -->
+            <div class="filters-wrapper">
+                <button class="filter-btn active" onclick="filtrarLibros('todos')">
+                    <i class="fas fa-globe"></i> Todos
+                </button>
+                <button class="filter-btn" onclick="filtrarLibros('es')">
+                    <i class="fas fa-flag"></i> Español
+                </button>
+                <button class="filter-btn" onclick="filtrarLibros('en')">
+                    <i class="fas fa-flag"></i> English
+                </button>
+                <button class="filter-btn" onclick="filtrarLibros('fr')">
+                    <i class="fas fa-flag"></i> Français
+                </button>
+                <button class="filter-btn" onclick="filtrarLibros('pt')">
+                    <i class="fas fa-flag"></i> Português
+                </button>
+            </div>
+
+            <!-- Grid de libros interactivo -->
+            <div class="books-grid" id="booksGrid">
+                <div th:each="libro : ${libros}" th:if="${libroStat.index < 8}" 
+                     class="book-card" 
+                     th:data-idioma="${libro.idioma}"
+                     onclick="verDetalleLibro('[[${libro.titulo}]]', '[[${libro.autores.iterator().next().nombre}]]', '[[${libro.idioma}]]', '[[${libro.numeroDescargas}]]')">
+                    <div class="book-cover">
+                        <img th:src="|https://picsum.photos/300/450?random=${libro.id}|" 
+                             th:alt="${libro.titulo}">
+                        <div class="book-overlay">
+                            <div>
+                                <h5 class="text-white mb-2">Ver detalles</h5>
+                                <p class="small text-light opacity-75">
+                                    <i class="fas fa-eye me-1"></i> Click para más info
+                                </p>
+                            </div>
+                        </div>
+                        <div class="book-rating">
+                            <i class="fas fa-download me-1"></i>
+                            <span th:text="${libro.numeroDescargas}">0</span>
+                        </div>
+                    </div>
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${libro.titulo}">Título del libro</h3>
+                        <p class="book-author">
+                            <i class="fas fa-pen"></i>
+                            <span th:text="${libro.autores.iterator().next().nombre}">Autor</span>
+                        </p>
+                        <div class="book-meta">
+                            <span class="book-language" th:text="${libro.idioma}">ES</span>
+                            <span class="book-downloads">
+                                <i class="fas fa-download"></i>
+                                <span th:text="${libro.numeroDescargas}">0</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón ver más -->
+            <div class="text-center mt-5">
+                <a href="/libros" class="btn-modern">
+                    <i class="fas fa-compass me-2"></i>
+                    Explorar catálogo completo
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer moderno con transparencia -->
+        <footer class="footer-modern">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <h5 class="footer-title">LiterAlura</h5>
+                        <p class="text-light opacity-75">
+                            Una experiencia única para descubrir y disfrutar de la literatura universal.
+                        </p>
+                        <div class="social-links mt-3">
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-4">
+                        <h5 class="footer-title">Explorar</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="/libros" class="footer-link">Libros</a></li>
+                            <li><a href="/autores" class="footer-link">Autores</a></li>
+                            <li><a href="/top10" class="footer-link">Tendencias</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-2 mb-4">
+                        <h5 class="footer-title">Idiomas</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="/libros/idioma?idioma=es" class="footer-link">Español</a></li>
+                            <li><a href="/libros/idioma?idioma=en" class="footer-link">Inglés</a></li>
+                            <li><a href="/libros/idioma?idioma=fr" class="footer-link">Francés</a></li>
+                            <li><a href="/libros/idioma?idioma=pt" class="footer-link">Portugués</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <h5 class="footer-title">Newsletter</h5>
+                        <p class="text-light opacity-75">Recibe las últimas novedades</p>
+                        <div class="d-flex">
+                            <input type="email" class="form-control-custom" placeholder="Tu email">
+                            <button class="btn-modern ms-2">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <p class="text-light opacity-50 mb-0">
+                        <i class="fas fa-heart text-danger"></i> Hecho con pasión por la literatura
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal de detalle de libro (igual que antes) -->
+    <div class="modal fade" id="bookModal" tabindex="-1">
+        <!-- ... contenido del modal ... -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // GENERAR ESTRELLAS PARA EL FONDO
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            if (!starsContainer) return;
+            
+            const numberOfStars = 200;
+            
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Posición aleatoria
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                
+                // Tamaño aleatorio
+                const size = Math.random() * 3;
+                
+                // Duración de parpadeo
+                const duration = 2 + Math.random() * 5;
+                
+                // Opacidad base
+                const opacity = 0.3 + Math.random() * 0.7;
+                
+                star.style.cssText = `
+                    left: ${left}%;
+                    top: ${top}%;
+                    width: ${size}px;
+                    height: ${size}px;
+                    --duration: ${duration}s;
+                    --start-opacity: ${opacity};
+                    animation: twinkle ${duration}s ease-in-out infinite;
+                `;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('mainNav');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Inicializar fondo de estrellas
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+        });
+
+        // Filtrar libros por idioma
+        function filtrarLibros(idioma) {
+            const books = document.querySelectorAll('.book-card');
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            books.forEach(book => {
+                if (idioma === 'todos' || book.dataset.idioma === idioma) {
+                    book.style.display = 'block';
+                    book.style.animation = 'fadeInUp 0.5s';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        }
+
+        function buscarTag(tag) {
+            document.querySelector('.search-input').value = tag;
+            document.querySelector('.search-wrapper').submit();
+        }
+
+        function verDetalleLibro(titulo, autor, idioma, descargas) {
+            // Implementar según necesidad
+            alert(`Detalles del libro:\n\nTítulo: ${titulo}\nAutor: ${autor}\nIdioma: ${idioma}\nDescargas: ${descargas}`);
+        }
+    </script>
+
+    <style>
+        /* Estilos adicionales */
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: var(--light);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--gradient-1);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--glow);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff, var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .book-cover {
+            position: relative;
+            aspect-ratio: 2/3;
+            overflow: hidden;
+        }
+
+        .book-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .book-card:hover .book-cover img {
+            transform: scale(1.1);
+        }
+
+        .book-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, transparent 0%, rgba(2, 6, 23, 0.9) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: flex-end;
+            padding: 1.5rem;
+        }
+
+        .book-card:hover .book-overlay {
+            opacity: 1;
+        }
+
+        .book-rating {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            color: var(--accent);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .book-card:hover .book-rating {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .book-info {
+            padding: 1.5rem;
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+            transition: color 0.3s;
+        }
+
+        .book-card:hover .book-title {
+            color: var(--primary-light);
+        }
+
+        .book-author {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .book-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .book-language {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary-light);
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            backdrop-filter: blur(5px);
+        }
+
+        .book-downloads {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--secondary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-modern {
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--glow);
+            color: white;
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--light);
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50%;
+            height: 2px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .footer-link {
+            color: var(--gray);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-link:hover {
+            color: var(--primary-light);
+            transform: translateX(5px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--glow);
+        }
+
+        .form-control-custom {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: white;
+            border-radius: 50px;
+            padding: 0.8rem 1.2rem;
+            flex: 1;
+            backdrop-filter: blur(5px);
+        }
+
+        .form-control-custom:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: var(--glow);
+        }
+    </style>
+</body>
+</html>
